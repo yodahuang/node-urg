@@ -1,0 +1,27 @@
+{
+  "name": "urg",
+  "version": "1.2.0",
+  "description": "A node wrapper for urg library",
+  "keywords": [
+    "urg",
+    "lidar"
+  ],
+  "scripts": {
+    "emcc-path": "emcc-path",
+    "test": "sudo node test.js",
+    "autogypi": "autogypi",
+    "node-gyp": "node-gyp",
+    "copyasm": "copyasm",
+    "ndts": "ndts",
+    "install": "autogypi && node-gyp configure build",
+    "build": "node-gyp configure build"
+  },
+  "author": "Yanda Huang",
+  "license": "BSD-3-Clause",
+  "dependencies": {
+    "autogypi": "^0.2.2",
+    "mathjs": "^3.12.1",
+    "nbind": "^0.3.9",
+    "node-gyp": "^3.6.0"
+  }
+}
