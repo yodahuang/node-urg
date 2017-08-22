@@ -1,11 +1,3 @@
-/*!
-  \example calculate_xy.c Calculates X-Y coordinates
-
-  Having the X axis aligned to the front step of the sensor, calculates the coordinates for measurement data
-  \author Satofumi KAMIMURA
-
-  $Id: calculate_xy.c,v e5d1719877a2 2015/05/07 04:12:14 jun $
-*/
 #include "urg_calculate_xy.h"
 #include <cmath>
 #include <cstdio>
@@ -13,7 +5,6 @@
 #include <iostream>
 
 using namespace std;
-
 
 vector<double> urg_angle_dist(const char* device)
 {
@@ -28,17 +19,19 @@ vector<double> urg_angle_dist(const char* device)
     const double M_TO_MM = 1000;
     const int MAX_TRUSTABLE = 30;
 
-    vector<double> arr(1081*2, 0);
+    vector<double> arr_dist;
+    vector<double> arr_angle;
+
     if (urg_open(&urg, URG_SERIAL, device, 115200) < 0) {
-        printf("urg_open: %s, %ld: %s\n",
+        printf("urg_open: %s, %d: %s\n",
             URG_SERIAL, 115200, urg_error(&urg));
-        return arr;
+        return arr_dist;
     }
 
     data = (long *)malloc(urg_max_data_size(&urg) * sizeof(data[0]));
     if (!data) {
         perror("urg_max_index()");
-        return arr;
+        return arr_dist;
     }
 
     // Gets measurement data
@@ -47,7 +40,7 @@ vector<double> urg_angle_dist(const char* device)
     if (n < 0) {
         printf("urg_get_distance: %s\n", urg_error(&urg));
         urg_close(&urg);
-        return arr;
+        return arr_dist;
     }
 
     // Outputs X-Y coordinates
@@ -61,11 +54,9 @@ vector<double> urg_angle_dist(const char* device)
         }
 
         radian = urg_index2rad(&urg, i);
-        arr[i] = distance / M_TO_MM;
-        arr[1081+i] = radian;
-        //printf("%ld, %ld\n", arr[i], arr[1081+i]);
+        arr_dist.push_back(distance / M_TO_MM);
+        arr_angle.push_back(radian);
     }
-    //printf("\n");
 
     // Disconnects
     free(data);
@@ -74,7 +65,12 @@ vector<double> urg_angle_dist(const char* device)
 #if defined(URG_MSC)
     getchar();
 #endif
-    return arr;
+    // Combine the two vectors for better communictaion between C++ and Node.js
+    vector<double> arr_total;
+    arr_total.reserve( arr_dist.size()*2 );
+    arr_total.insert(arr_total.end(), arr_dist.begin(), arr_dist.end());
+    arr_total.insert(arr_total.end(), arr_angle.begin(), arr_angle.end());
+    return arr_total;
 }
 
 #include "nbind/nbind.h"
