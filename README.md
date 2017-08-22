@@ -1,5 +1,7 @@
 ## Urg library for node.js
 
+[![NPM](https://nodei.co/npm/urg.png)](https://nodei.co/npm/urg/)
+
 This is a ported JS library of the [original URG library](https://sourceforge.net/p/urgnetwork/wiki/Home/) written in C/C++, aiming to read data from Hokuyo URG-Series sensors, which are accurate distance measurement sensors.This port is implemented using [nbind](https://www.npmjs.com/package/nbind).
 
 Currently, the library only implement the basic functions of reading lidar data and is **only work on Linux and Mac**.
